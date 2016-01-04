@@ -1,14 +1,9 @@
 # -*- coding: utf-8 -*-
-__author__ = 'daivq'
 
 import scrapy
 from ..items import PyjobItem
 from ..pymods import xtract
-
-KWS = ["python", "django",
-       "flask", "openstack",
-       "pyramid", "pylons",
-       "web2py", "scrapy"]
+from ..keywords import KWS
 
 province = u'Nơi làm việc'
 wage = u'Mức lương'
@@ -19,12 +14,18 @@ specialize = u'Yêu cầu công việc'
 file_request = u'Yêu cầu hồ sơ'
 leadtime = u'Hạn nộp hồ sơ'
 language = u'Ngôn ngữ hồ sơ'
+website = u' Website: '
+phone = u' Điện thoại: '
+fax = u' Fax: '
+size = u' Số nhân viên: '
+
 
 
 class MyworkSpider(scrapy.Spider):
     name = "mywork"
     allowed_domains = ["mywork.com.vn"]
-    start_urls = ["http://mywork.com.vn/tim-viec-lam/python.html"]
+    start_urls = [("http://mywork.com.vn/tim-viec-lam/" + kw + ".html")
+                  for kw in KWS]
 
     def parse(self, resp):
         for href in resp.xpath('//div[@class="item "]/div/a/@href').extract():
@@ -71,10 +72,24 @@ class MyworkSpider(scrapy.Spider):
                     item["specialize"] = xtract(desjob, 'p/text()')
                 else:
                     item["specialize"] = xtract(desjob, 'div/text()')
+
             if file_request == kws:
                 item["file_request"] = xtract(desjob, 'p/text()')
             if leadtime == kws:
                 item["leadtime"] = xtract(desjob, 'p/text()')
             if language == kws:
                 item["language"] = xtract(desjob, 'p/text()')
-            yield item
+
+        for mw in resp.xpath('//p[@class="mw-ti"]'):
+            ti = mw.xpath('text()').extract()[0]
+            if website == ti:
+                item["website"] = xtract(mw, 'span/text()')
+            if phone == ti:
+                item["phone"] = xtract(mw, 'span/a/text()')
+            if size == ti:
+                item["size"] = xtract(mw, 'span/text()')
+            if fax == ti:
+                item["fax"] = xtract(mw, 'span/text()')
+        item["logo"] = xtract(resp, '//div[@class="logo-company"]/img/@src')
+
+        yield item

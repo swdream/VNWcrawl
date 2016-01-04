@@ -19,4 +19,11 @@ class PyjobItem(Item):
     contact = Field()
     size = Field()
     logo = Field()
+    file_request = Field()
+    leadtime = Field()
+    language = Field()
+    experience = Field()
+    website = Field()
+    phone = Field()
+    fax = Field()
     pass

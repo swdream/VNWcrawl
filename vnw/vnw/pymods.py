@@ -1,8 +1,8 @@
-__author__ = 'daivq'
+# -*- coding: utf-8 -*-
 
-def xtract(response, xpath):
+def xtract(resp, xpath):
     li = []
-    xtracts = response.xpath(xpath).extract()
+    xtracts = resp.xpath(xpath).extract()
     for xts in xtracts:
         xts = xts.strip()
         li.append(xts)

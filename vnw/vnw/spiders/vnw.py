@@ -1,10 +1,9 @@
-__author__ = 'daivq'
+# -*- coding: utf-8 -*-
 
 import scrapy
 from ..items import PyjobItem
 from ..pymods import xtract
-
-KWS = ["python", "django", "flask", "openstack", "pyramid", "pylons", "web2py"]
+from ..keywords import KWS
 
 
 class VnwSpider(scrapy.Spider):
@@ -19,8 +18,7 @@ class VnwSpider(scrapy.Spider):
             urls = resp.xpath(
                 '//a[@class="job-title text-clip text-lg"]/@href').extract()
             for url in urls:
-                yield scrapy.Request(url, callback=self.parse_content)
-
+                yield scrapy.Request(url, self.parse_content)
 
     def parse_content(self, resp):
         item = PyjobItem()
@@ -30,7 +28,8 @@ class VnwSpider(scrapy.Spider):
         item["address"] = xtract(resp,
             '//span[@class="company-address block"]/text()')
         item["province"] = xtract(resp, '//span[@itemprop="address"]/a/text()')
-        item["wage"] = xtract(resp, '//div[@class="col-sm-12"]/div/text()')
+        item["wage"] = ''
+        item["welfare"] = xtract(resp, '//div[@class="col-sm-12"]/div/text()')
         item["skill"] = xtract(resp, '//span[@class="tag-name"]/text()')
         item["work"] = xtract(resp, '//div[@id="job-description"]/text()')
         item["specialize"] = xtract(resp, '//div[@class=""]/text()')
