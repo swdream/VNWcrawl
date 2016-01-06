@@ -26,4 +26,7 @@ class PyjobItem(Item):
     website = Field()
     phone = Field()
     fax = Field()
+    level = Field()
+    other_info = Field()
+    date_post = Field()
     pass
