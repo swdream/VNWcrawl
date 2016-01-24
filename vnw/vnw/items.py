@@ -30,4 +30,8 @@ class PyjobItem(Item):
     other_info = Field()
     date_post = Field()
     url = Field()
+<<<<<<< HEAD
     pass
+=======
+    pass
+>>>>>>> careerbuilder

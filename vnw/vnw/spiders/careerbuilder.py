@@ -31,7 +31,11 @@ class CareerbuilderSpider(scrapy.Spider):
 
     def parse_content(self, resp):
         item = PyjobItem()
+<<<<<<< HEAD
 	item["url"] = resp.url
+=======
+        item["url"] = resp.url
+>>>>>>> careerbuilder
         item["name"] = xtract(resp, '//h1[@itemprop="title"]/text()')
         item["company"] = xtract(resp, '//span[@itemprop="name"]/text()')
         item["address"] = xtract(resp,
