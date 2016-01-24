@@ -29,4 +29,5 @@ class PyjobItem(Item):
     level = Field()
     other_info = Field()
     date_post = Field()
+    url = Field()
     pass
