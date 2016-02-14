@@ -17,15 +17,26 @@ class ItviecSpider(scrapy.Spider):
     def parse(self, resp):
         url = resp.url
         keyword = url.split('/jobs/')[1]
-        for href in resp.xpath('//h2[@class="title"]/a/@href').extract():
-            request = scrapy.Request(resp.urljoin(href), self.parse_content)
-            request.meta["keyword"] = keyword
-            yield request
+        for div in resp.xpath('//div[@class="job_content"]'):
+            try:
+                data_post_date = xtract(div, 'div/div[@class="text"]/text()')
+                day = data_post_date.split(' ')[1]
+                month = data_post_date.split(' ')[0]
+                month_convert = convert(month)
+                post_date = month_convert + '-' + day
+            except IndexError:
+                post_date = 'Hot Job'
+            for href in div.xpath('div/h2/a/@href').extract():
+                request = scrapy.Request(resp.urljoin(href), self.parse_content)
+                request.meta["keyword"] = keyword
+                request.meta["post_date"] = post_date
+                yield request
 
     def parse_content(self, resp):
         item = PyjobItem()
         item["keyword"] = resp.meta["keyword"]
         item["url"] = resp.url
+        item["post_date"] = resp.meta["post_date"]
         item["name"] = xtract(resp, '//h1[@class="job_title"]/text()')
         item["company"] = xtract(resp, '//h3[@class="name"]/text()')
         item["address"] = resp.xpath('//div[@class="address"]/'
